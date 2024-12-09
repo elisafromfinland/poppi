@@ -1,8 +1,8 @@
 ---
 title: "Poppi exhibition Amsterdam 2024"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 date: "2024-12-09"
 ---
 
@@ -71,7 +71,7 @@ barplot(table(y[,20],y[,21]),beside=T,names.arg=names[[21]],
 ## Legalise?
 ```{r, echo=FALSE}
 y=as.matrix(x)
-i=1;barplot(table(y[,i]), main=questions[i],cex.main=.8,col='lightblue',names.arg=names[[i]],cex.main=1.5,cex.names=1)
+i=1;print(barplot(table(y[,i]), main=questions[i],cex.main=.8,col='lightblue',names.arg=names[[i]],cex.main=1.5,cex.names=1))
 ```
 
 ## Issue imporantance
@@ -90,12 +90,12 @@ i=23;barplot(table(y[,i]), main='Duration (min.)',cex.main=.8,,cex.main=1.5,cex.
 ```
 
 ## How to regularize by Use
-```{r by use, echo=FALSE}
+```{r by use, echo=FALSE,results='hide'}
 y=as.matrix(x)
 y[y[,22]==4,]=NA
 for (i in 3:9)
-barplot(table(y[,i],y[,22]),beside=T,names.arg=names[[22]][-4],
-        main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
+print(barplot(table(y[,i],y[,22]),beside=T,names.arg=names[[22]][-4],
+        main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]]))
 ```
 
 ## How to regularize by Age
@@ -118,7 +118,7 @@ barplot(table(y[,i],y[,20]),beside=T,names.arg=names[[20]],
 
 
 ## Exhibition effect on opinion on legalization by Use group
-```{r by Exhibition effect, echo=FALSE}
+```{r by Exhibition effect, echo=FALSE, results='hide'}
 data_selection=as.data.frame(x)
 names(data_selection)
 data_selection=data_selection[,c('used',"sale1","sale2","imp1","imp2")]
