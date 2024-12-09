@@ -1,6 +1,8 @@
 ---
 title: "Poppi exhibition Amsterdam 2024"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2024-12-09"
 ---
 
@@ -83,18 +85,18 @@ i=19;barplot(table(y[,i]), main=questions[i],cex.main=.8,names.arg=names[[i]],co
 ```
 
 ## Visit duration in minutes
+```{r, echo=FALSE}
 i=23;barplot(table(y[,i]), main='Duration (min.)',cex.main=.8,,cex.main=1.5,cex.names=1,col='lightblue')
+```
 
 ## How to regularize by Use
 ```{r by use, echo=FALSE}
 y=as.matrix(x)
 y[y[,22]==4,]=NA
-
 for (i in 3:9)
 barplot(table(y[,i],y[,22]),beside=T,names.arg=names[[22]][-4],
         main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
 ```
-
 
 ## How to regularize by Age
 ```{r by age, echo=FALSE}
