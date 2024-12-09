@@ -55,6 +55,8 @@ names[[21]]=c('11-16','17-25','25-65','65+')
 names[[22]]=c('never','once or twice','regularly','Prefer not to say')
 ```
 
+
+## Sample Age x Gender
 ```{r barplots1, echo=FALSE}
 y=as.matrix(x)
 #for(i in 1:21)
@@ -64,17 +66,26 @@ barplot(table(y[,20],y[,21]),beside=T,names.arg=names[[21]],
 
 ```
 
-
-```{r barplots2, echo=FALSE}
+## Legalise?
+```{r, echo=FALSE}
 y=as.matrix(x)
 i=1;barplot(table(y[,i]), main=questions[i],cex.main=.8,col='lightblue',names.arg=names[[i]],cex.main=1.5,cex.names=1)
+```
+
+## Issue imporantance
+```{r, echo=FALSE}
 i=2;barplot(table(y[,i]), main=questions[i],cex.main=.8,col='lightblue',names.arg=names[[i]],cex.main=1.5,cex.names=1)
+```
+
+## Exhibition informative
+```{r, echo=FALSE}
 i=19;barplot(table(y[,i]), main=questions[i],cex.main=.8,names.arg=names[[i]],col=c('lightgreen','lightcoral'),cex.main=1.5,cex.names=1.5)
 ```
 
+## Visit duration in minutes
+i=23;barplot(table(y[,i]), main='Duration (min.)',cex.main=.8,,cex.main=1.5,cex.names=1,col='lightblue')
 
-
-
+## How to regularize by Use
 ```{r by use, echo=FALSE}
 y=as.matrix(x)
 y[y[,22]==4,]=NA
@@ -83,6 +94,9 @@ for (i in 3:9)
 barplot(table(y[,i],y[,22]),beside=T,names.arg=names[[22]][-4],
         main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
 ```
+
+
+## How to regularize by Age
 ```{r by age, echo=FALSE}
 y=as.matrix(x)
 
@@ -90,6 +104,8 @@ for (i in 3:9)
 barplot(table(y[,i],y[,21]),beside=T,names.arg=names[[21]],
         main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
 ```
+
+## How to regularize by Gender
 ```{r by gender, echo=FALSE}
 y=as.matrix(x)
 
@@ -98,3 +114,73 @@ barplot(table(y[,i],y[,20]),beside=T,names.arg=names[[20]],
         main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
 ```
 
+
+## Exhibition effect on opinion on legalization by Use group
+```{r by Exhibition effect, echo=FALSE}
+data_selection=as.data.frame(x)
+names(data_selection)
+data_selection=data_selection[,c('used',"sale1","sale2","imp1","imp2")]
+data_selection$used[data_selection$used==4]=NA
+
+
+data_selection=na.omit(data_selection)
+w=reshape(data_selection,
+        varying = list(c("sale1", "sale2"),c("imp1","imp2")),  # Columns to pivot
+        v.names = c("sale","imp"),                   # Name for values
+        timevar = "Pre_Post",                    # Name for the time variable
+        times = c("Pre", "Post"),         # New variable levels
+        direction = "long"
+)
+head(w)
+model1 <- aov(sale ~ Pre_Post + Error(as.factor(id)/Pre_Post), data = w)
+summary(model1)
+t.test(w$sale[w$Pre_Post=='Pre'],w$sale[w$Pre_Post=='Post'],paired=T)
+t.test(data_selection[,2],data_selection[,3],paired=T)
+
+model2 <- aov(sale ~ used + Pre_Post + Error(as.factor(id)/Pre_Post), data = w)
+summary(model2)
+
+library(ggplot2)
+library(tidyverse)
+summary_data <- w %>%
+  group_by(used, Pre_Post) %>%
+  summarise(
+    mean_sale = mean(sale),
+    se = sd(sale) / sqrt(n()),
+    .groups = "drop"
+  )
+
+summary_data <- summary_data %>%
+  mutate(used_label = case_when(
+    used == 1 ~ "never",
+    used == 2 ~ "once or twice",
+    used == 3 ~ "regularly",
+    
+    TRUE ~ as.character(used)  # Fallback for other numbers
+  ))
+
+
+summary_data <- summary_data %>%
+  mutate(Pre_Post = factor(Pre_Post, levels = rev(levels(factor(Pre_Post)))))
+
+
+ggplot(summary_data, aes(x = Pre_Post, y = mean_sale, group = used_label, color = used_label)) +
+  geom_line() +
+  geom_point(size = 5) +
+  geom_errorbar(aes(ymin = mean_sale - se, ymax = mean_sale + se), width = 0.1) +
+  labs(
+    title = "The sale of Ecstasy should be legalised",
+    x = "Pre/Post",
+    y = "Agree",
+    color = "Used"
+  ) +
+  theme_minimal()+
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),  # Bigger title
+    axis.title.x = element_text(size = 14),              # Bigger x-axis label
+    axis.title.y = element_text(size = 14),              # Bigger y-axis label
+    axis.text = element_text(size = 12),                 # Bigger tick labels
+    legend.title = element_text(size = 17),              # Bigger legend title
+    legend.text = element_text(size = 14)                # Bigger legend text
+  )
+```
