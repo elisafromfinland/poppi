@@ -1,0 +1,100 @@
+---
+title: "Poppi exhibition Amsterdam 2024"
+output: html_document
+date: "2024-12-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data read
+
+```{r data}
+x <- readxl::read_xlsx("Poppi_results.xlsx")
+x$duration=as.numeric((x$t2-x$t1)/60)
+x$duration[x$duration <= 0]=NA
+x=x[,c(-1,-11)]
+
+
+questions='The sale of Ecstasy should be legalised (pre)'
+questions[2]='I find the issue of the regulation of Ec-
+stasy important (pre)'
+questions[3]='Permitted with a medical subscription (pre)'
+questions[4]='Permitted in a pharmacy (pre)'
+questions[5]='Permitted in a smart shop (pre)'
+questions[6]='Permitted in bars/clubs (pre)'
+questions[7]='Permitted for people of legal age (pre)'
+questions[8]='Permitted with a valid ID (pre)'
+questions[9]='and marketing can be permitted (pre)'
+questions[10]='The sale of Ecstasy should be legalised (post)'
+questions[11]='I find the issue of the regulation of Ec-
+stasy important (post)'
+questions[12]='Permitted with a medical subscription (post)'
+questions[13]='Permitted in a pharmacy (post)'
+questions[14]='Permitted in a smart shop (post)'
+questions[15]='Permitted in bars/clubs (post)'
+questions[16]='Permitted for people of legal age (post)'
+questions[17]='Permitted with a valid ID (post)'
+questions[18]='and marketing can be permitted (post)'
+questions[19]='I feel more informed about the regulation of Ecstasy'
+questions[20]='Gender'
+questions[21]='Age'
+questions[22]='I have used Ecstasy'
+names=list()
+names[[1]]=c('Strongly\ndisagree','Disagree','Neutral','Agree','Strongly\nagree')
+names[[2]]=c('Strongly\ndisagree','Disagree','Neutral','Agree','Strongly\n agree')
+names[[3]]=c("Yes","I don't know", "No")
+for(i in 4:9) names[[i]]=names[[3]]
+names[[10]]=names[[1]]
+names[[11]]=names[[2]]
+for(i in 12:18) names[[i]]=names[[3]]
+names[[19]]=c("Yes", "No")
+names[[20]]=c('Male','Female','Other')#,'Prefer not to say')
+names[[21]]=c('11-16','17-25','25-65','65+')
+names[[22]]=c('never','once or twice','regularly','Prefer not to say')
+```
+
+```{r barplots1, echo=FALSE}
+y=as.matrix(x)
+#for(i in 1:21)
+#barplot(table(y[,i]), main=questions[i],cex.main=.8,col='lightblue',names.arg=names[[i]])
+barplot(table(y[,20],y[,21]),beside=T,names.arg=names[[21]],
+        main=paste(questions[21],'(N = 221)'),col=c('lightblue','lightcoral','lightgreen'),cex.names=2,cex.main=2,legend=names[[20]])
+
+```
+
+
+```{r barplots2, echo=FALSE}
+y=as.matrix(x)
+i=1;barplot(table(y[,i]), main=questions[i],cex.main=.8,col='lightblue',names.arg=names[[i]],cex.main=1.5,cex.names=1)
+i=2;barplot(table(y[,i]), main=questions[i],cex.main=.8,col='lightblue',names.arg=names[[i]],cex.main=1.5,cex.names=1)
+i=19;barplot(table(y[,i]), main=questions[i],cex.main=.8,names.arg=names[[i]],col=c('lightgreen','lightcoral'),cex.main=1.5,cex.names=1.5)
+```
+
+
+
+
+```{r by use, echo=FALSE}
+y=as.matrix(x)
+y[y[,22]==4,]=NA
+
+for (i in 3:9)
+barplot(table(y[,i],y[,22]),beside=T,names.arg=names[[22]][-4],
+        main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
+```
+```{r by age, echo=FALSE}
+y=as.matrix(x)
+
+for (i in 3:9)
+barplot(table(y[,i],y[,21]),beside=T,names.arg=names[[21]],
+        main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
+```
+```{r by gender, echo=FALSE}
+y=as.matrix(x)
+
+for (i in 3:9)
+barplot(table(y[,i],y[,20]),beside=T,names.arg=names[[20]],
+        main=questions[i],col=c('lightgreen','grey','lightcoral'),cex.names=1.5,cex.main=1.5,legend=names[[i]])
+```
+
