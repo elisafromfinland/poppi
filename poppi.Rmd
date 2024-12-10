@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data read
 
-```{r data}
+```{r data,  echo=FALSE}
 x <- readxl::read_xlsx("Poppi_results.xlsx")
 x$duration=as.numeric((x$t2-x$t1)/60)
 x$duration[x$duration <= 0]=NA
